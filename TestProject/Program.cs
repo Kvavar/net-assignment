@@ -1,5 +1,10 @@
 using Serilog;
 using Serilog.Events;
+using Work.ApiModels;
+using Work.Database;
+using Work.Implementation;
+using Work.Interfaces;
+using Work.Mappers;
 
 // only log to console for simplicity
 Log.Logger = new LoggerConfiguration()
@@ -13,6 +18,10 @@ try
     builder.Host.UseSerilog();
     // Add services to the container.
 
+    // singleton to test via Swagger
+    builder.Services.AddSingleton<MockDatabase>();
+    builder.Services.AddScoped<IMapper<User, UserModelDto>, UserMapper>();
+    builder.Services.AddScoped<IRepository<User, Guid>, UserRepository>();
     builder.Services.AddControllers();
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();

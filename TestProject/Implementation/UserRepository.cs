@@ -3,6 +3,7 @@ using Work.Interfaces;
 
 namespace Work.Implementation
 {
+    // Use user cloning to prevent operations by reference
     public class UserRepository : IRepository<User, Guid>
     {
         private readonly MockDatabase _db;
@@ -11,19 +12,19 @@ namespace Work.Implementation
         {
             _db = db ?? throw new ArgumentNullException(nameof(db));
         }
-        
+
         public void Create(User user)
         {
             ValidateUser(user);
             
-            if(!_db.Users.TryAdd(user.Id, user))
-                throw new InvalidOperationException($"User with Id {user.Id} already exists.");
+            if(!_db.Users.TryAdd(user.Id, user.Clone()))
+                throw new ArgumentException($"User with Id {user.Id} already exists.");
         }
 
         public User Read(Guid key)
         {
             if (_db.Users.TryGetValue(key, out var user))
-                return user;
+                return user.Clone();
             
             // return null could be an option here,
             // but I wouldn't like to propagate nullable User further in a scope of a test task   
@@ -37,9 +38,13 @@ namespace Work.Implementation
             ValidateUser(user);
 
             if (_db.Users.ContainsKey(user.Id))
-                _db.Users[user.Id] = user;
-            
-            throw new KeyNotFoundException($"User with Id {user.Id} does not exist.");
+            {
+                _db.Users[user.Id] = user.Clone();
+            }
+            else
+            {
+                throw new KeyNotFoundException($"User with Id {user.Id} does not exist.");
+            }
         }
 
         // Throws an exception on missing user to allow clients to customize their behaviour for this case.
@@ -48,13 +53,16 @@ namespace Work.Implementation
         public void Remove(Guid key)
         {
             if (_db.Users.ContainsKey(key))
+            {
                 _db.Users.Remove(key);
-            
-            throw new KeyNotFoundException($"User with Id {key} does not exist.");
+            }
+            else
+            {
+                throw new KeyNotFoundException($"User with Id {key} does not exist.");
+            }
         }
         
         // User should not be null based on nullable annotation, but I would prefer to make sure to avoid unexpected NRE
-        // 
         private static void ValidateUser(User user)
         {
             if (user is null)

@@ -1,10 +1,10 @@
 ﻿namespace Work.Interfaces
 {
-    public interface IRepository<T,K>
+    public interface IRepository<T, in TK>
     {
         void Create(T obj);
-        T Read(K key);        
+        T Read(TK key);        
         void Update(T obj);
-        void Remove(K key);
+        void Remove(TK key);
     }
 }

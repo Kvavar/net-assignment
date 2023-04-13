@@ -7,7 +7,7 @@ using Work.Mappers;
 namespace Work.Controllers
 {
     [ApiController]
-    [Route("id")]
+    [Route("users")]
     public class UserController : ControllerBase
     {
         private readonly IRepository<User, Guid> _userRepository;
@@ -15,7 +15,7 @@ namespace Work.Controllers
         private readonly ILogger<UserController> _logger;
 
         // Using interfaces here may not be necessary if there is only single implementation of each interface
-        // I prefer to avoid using DI for the sake of DI, but leave it for demonstration purposes (and unit tests)
+        // I prefer to avoid using DI for the sake of DI, but leave it for demonstration purposes
         public UserController(
             IRepository<User, Guid> userRepository, 
             IMapper<User, UserModelDto> userMapper,
@@ -27,6 +27,7 @@ namespace Work.Controllers
         }
 
         [HttpGet]
+        [Route("id")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -81,6 +82,7 @@ namespace Work.Controllers
         }
 
         [HttpDelete]
+        [Route("id")]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
