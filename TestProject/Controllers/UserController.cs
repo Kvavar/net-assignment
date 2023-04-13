@@ -14,8 +14,9 @@ namespace Work.Controllers
         private readonly IMapper<User, UserModelDto> _userMapper;
         private readonly ILogger<UserController> _logger;
 
-        // Using interfaces here may not be necessary if there is only single implementation of each interface
-        // I prefer to avoid using DI for the sake of DI, but leave it for demonstration purposes
+        // Using interfaces here may not be necessary if there is only single implementation of each interface.
+        // But I leave it as is because afaik DI using interfaces is a standard practice in .NET 
+        // Async is not used for methods because there are no actual async operations behind DB operations
         public UserController(
             IRepository<User, Guid> userRepository, 
             IMapper<User, UserModelDto> userMapper,
