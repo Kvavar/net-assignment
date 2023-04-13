@@ -16,8 +16,8 @@ namespace Work.Implementation
         {
             ValidateUser(user);
             
-            if(!_db.Users.TryAdd(user.UserId, user))
-                throw new InvalidOperationException($"User with Id {user.UserId} already exists.");
+            if(!_db.Users.TryAdd(user.Id, user))
+                throw new InvalidOperationException($"User with Id {user.Id} already exists.");
         }
 
         public User Read(Guid key)
@@ -27,7 +27,7 @@ namespace Work.Implementation
             
             // return null could be an option here,
             // but I wouldn't like to propagate nullable User further in a scope of a test task   
-            throw new InvalidOperationException($"User with Id {key} does not exist."); 
+            throw new KeyNotFoundException($"User with Id {key} does not exist."); 
         }
 
         // Pure Update method as requires by the interface,
@@ -36,26 +36,25 @@ namespace Work.Implementation
         {
             ValidateUser(user);
 
-            if (_db.Users.ContainsKey(user.UserId))
-                _db.Users[user.UserId] = user;
+            if (_db.Users.ContainsKey(user.Id))
+                _db.Users[user.Id] = user;
             
-            throw new InvalidOperationException($"User with Id {user.UserId} does not exist.");
+            throw new InvalidOperationException($"User with Id {user.Id} does not exist.");
         }
 
         // Throws an exception on missing user to allow clients to customize their behaviour for this case.
         // Although do nothing on missing user may be an option,
         // since it leaves the DB in the desired state (no specified user stored) and simplifies the logic of the repo 
-        public void Remove(User user)
+        public void Remove(Guid key)
         {
-            ValidateUser(user);
-
-            if (_db.Users.ContainsKey(user.UserId))
-                _db.Users.Remove(user.UserId);
+            if (_db.Users.ContainsKey(key))
+                _db.Users.Remove(key);
             
-            throw new InvalidOperationException($"User with Id {user.UserId} does not exist.");
+            throw new InvalidOperationException($"User with Id {key} does not exist.");
         }
         
         // User should not be null based on nullable annotation, but I would prefer to make sure to avoid unexpected NRE
+        // 
         private static void ValidateUser(User user)
         {
             if (user is null)

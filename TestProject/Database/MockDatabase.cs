@@ -16,11 +16,11 @@
             {
                 var user = new User
                 {
-                    UserId = Guid.NewGuid(),
-                    UserName = $"User {i}",
+                    Id = Guid.NewGuid(),
+                    Name = $"User {i}",
                     Birthday = DateTime.Now.AddYears(-i)
                 };
-                Users.Add(user.UserId, user);
+                Users.Add(user.Id, user);
             }
         }
     }
