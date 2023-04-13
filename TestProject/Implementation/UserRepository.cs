@@ -39,7 +39,7 @@ namespace Work.Implementation
             if (_db.Users.ContainsKey(user.Id))
                 _db.Users[user.Id] = user;
             
-            throw new InvalidOperationException($"User with Id {user.Id} does not exist.");
+            throw new KeyNotFoundException($"User with Id {user.Id} does not exist.");
         }
 
         // Throws an exception on missing user to allow clients to customize their behaviour for this case.
@@ -50,7 +50,7 @@ namespace Work.Implementation
             if (_db.Users.ContainsKey(key))
                 _db.Users.Remove(key);
             
-            throw new InvalidOperationException($"User with Id {key} does not exist.");
+            throw new KeyNotFoundException($"User with Id {key} does not exist.");
         }
         
         // User should not be null based on nullable annotation, but I would prefer to make sure to avoid unexpected NRE

@@ -20,7 +20,12 @@ namespace Work.Controllers
             _userMapper = userMapper ?? throw new ArgumentNullException(nameof(userMapper));
         }
 
-        public IActionResult Get(Guid id)
+        [HttpGet]
+        [Route("id")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public ActionResult<UserModelDto> Get(Guid id)
         {
             try
             {
@@ -34,7 +39,12 @@ namespace Work.Controllers
             }
         }
 
-        public IActionResult Post(UserModelDto user)
+        [HttpPost]
+        [Route("id")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult Post([FromBody] UserModelDto user)
         {
             var model = _userMapper.ToModel(user);
             _userRepository.Create(model);
@@ -42,20 +52,44 @@ namespace Work.Controllers
             return Accepted();
         }
         
-        public IActionResult Put(UserModelDto user)
+        [HttpPut]
+        [Route("id")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult Put([FromBody] UserModelDto user)
         {
-            var model = _userMapper.ToModel(user);
-            _userRepository.Update(model);
-            
-            return Accepted();
+            try
+            {
+                var model = _userMapper.ToModel(user);
+                _userRepository.Update(model);
+                
+                return Accepted();
+            }
+            catch (KeyNotFoundException e)
+            {
+                return NotFound(e.Message);
+            }
         }
 
+        [HttpDelete]
+        [Route("id")]
+        [ProducesResponseType(StatusCodes.Status202Accepted)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult Delete(Guid id)
         {
-            _userRepository.Remove(id);
+            try
+            {
+                _userRepository.Remove(id);
             
-            return Accepted();
+                return Accepted();
+            }
+            catch (KeyNotFoundException e)
+            {
+                return NotFound(e.Message);
+            }
         }
-
     }
 }
