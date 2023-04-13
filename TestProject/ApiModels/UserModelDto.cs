@@ -1,14 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Work.ApiModels
+namespace Work.ApiModels;
+
+public class UserModelDto
 {
-    public class UserModelDto
-    {
-        [Required]
-        public Guid Id { get; set; }
+    [Required]
+    public Guid Id { get; set; }
 
-        public string Name { get; set; }
+    public string Name { get; set; }
 
-        public DateTime Birthday { get; set; }
-    }
+    public DateTime Birthday { get; set; }
 }

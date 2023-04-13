@@ -7,21 +7,26 @@ using Work.Mappers;
 namespace Work.Controllers
 {
     [ApiController]
+    [Route("id")]
     public class UserController : ControllerBase
     {
         private readonly IRepository<User, Guid> _userRepository;
         private readonly IMapper<User, UserModelDto> _userMapper;
-        
+        private readonly ILogger<UserController> _logger;
+
         // Using interfaces here may not be necessary if there is only single implementation of each interface
         // I prefer to avoid using DI for the sake of DI, but leave it for demonstration purposes (and unit tests)
-        public UserController(IRepository<User, Guid> userRepository, IMapper<User, UserModelDto> userMapper)
+        public UserController(
+            IRepository<User, Guid> userRepository, 
+            IMapper<User, UserModelDto> userMapper,
+            ILogger<UserController> logger)
         {
             _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             _userMapper = userMapper ?? throw new ArgumentNullException(nameof(userMapper));
+            _logger = logger;
         }
 
         [HttpGet]
-        [Route("id")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -35,12 +40,12 @@ namespace Work.Controllers
             }
             catch (KeyNotFoundException e)
             {
+                _logger.LogError(e, $"{nameof(User)} was not found by Id {id}");
                 return NotFound(e.Message);
             }
         }
 
         [HttpPost]
-        [Route("id")]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -49,11 +54,12 @@ namespace Work.Controllers
             var model = _userMapper.ToModel(user);
             _userRepository.Create(model);
 
+            _logger.LogInformation("User {@User} was created.", user);
+
             return Accepted();
         }
         
         [HttpPut]
-        [Route("id")]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -69,12 +75,12 @@ namespace Work.Controllers
             }
             catch (KeyNotFoundException e)
             {
+                _logger.LogError(e, $"{nameof(User)} was not found by Id {user.Id}");
                 return NotFound(e.Message);
             }
         }
 
         [HttpDelete]
-        [Route("id")]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -88,6 +94,7 @@ namespace Work.Controllers
             }
             catch (KeyNotFoundException e)
             {
+                _logger.LogError(e, $"{nameof(User)} was not found by Id {id}");
                 return NotFound(e.Message);
             }
         }

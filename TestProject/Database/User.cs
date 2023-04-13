@@ -1,12 +1,10 @@
-﻿namespace Work.Database
+﻿namespace Work.Database;
+
+public class User
 {
-    public class User
-    {
-        public Guid Id { get; set; }
+    public Guid Id { get; set; }
 
-        public string Name { get; set; }
+    public string Name { get; set; }
 
-        public DateTime Birthday { get; set; }
-
-    }
+    public DateTime Birthday { get; set; }
 }
