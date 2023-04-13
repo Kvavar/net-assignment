@@ -32,7 +32,8 @@ namespace Work.Implementation
         }
 
         // Pure Update method as requires by the interface,
-        // although UpdateOrCreate could work better to reduce number of calls to DB
+        // although CreateOrUpdate could work better to reduce number of calls to DB
+        // or for handling cases where Update called for non-existing User
         public void Update(User user)
         {
             ValidateUser(user);

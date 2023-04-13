@@ -26,6 +26,11 @@ namespace Work.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Create user by the given dto
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Ok if user was created, Not Found if user does not exist</returns>
         [HttpGet]
         [Route("id")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -46,6 +51,10 @@ namespace Work.Controllers
             }
         }
 
+        /// <summary>
+        /// Create user by the given dto
+        /// </summary>
+        /// <returns>Accepted if user was created</returns>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
@@ -60,6 +69,10 @@ namespace Work.Controllers
             return Accepted();
         }
         
+        /// <summary>
+        /// Update user with the given Id (in dto)
+        /// </summary>
+        /// <returns>Accepted if user was updated, Not Found if user does not exist</returns>
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
         [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ValidationProblemDetails))]
@@ -81,6 +94,11 @@ namespace Work.Controllers
             }
         }
 
+        /// <summary>
+        /// Delete user by the given id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Accepted if user was removed, Not Found if user does not exist</returns>
         [HttpDelete]
         [Route("id")]
         [ProducesResponseType(StatusCodes.Status202Accepted)]
